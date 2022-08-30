@@ -7,6 +7,7 @@ import 'dart:math';
 import 'characters/DeadDuck.dart';
 import 'characters/FlyButton.dart';
 import 'characters/Score.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class Scene extends StatefulWidget {
   late double appWidth;
@@ -21,9 +22,7 @@ class Scene extends StatefulWidget {
 
 class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
   static const int duckSize = 120;
-  static const acceleration = 0.3;
-
-  /// 虛擬世界加速度。單位: pixel / frame
+  static const acceleration = 0.3; // 虛擬世界加速度。單位: pixel / frame
 
   late Position duckPosition;
   late Position cloudPosition;
@@ -31,6 +30,8 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
   late Position brickWallPosition;
   late double duckVelocity;
   late int score;
+  final player = AudioPlayer();
+  late bool start = false;
 
   /// 放角色的地方
   List<Widget> characters = [];
@@ -169,6 +170,7 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
     }
     return false;
   }
+
   ///鴨子動
   void duckMoves() {
     /** 重力加速度 */
@@ -197,7 +199,17 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
 
   ///鴨子要飛
   void flyAction() {
-
+    /** 
+     * BGM
+     * 在 chrome 66 後不能自動播音樂。
+     * 錯誤訊息: play() failed because the user didn't interact with the document first.
+     * https://github.com/bluefireteam/audioplayers/issues/831
+     */
+    if (!start) {
+      player.play(UrlSource('sounds/Sneaky_Snitch.mp3'),
+          mode: PlayerMode.lowLatency);
+      start = true;
+    }
   }
 }
 
