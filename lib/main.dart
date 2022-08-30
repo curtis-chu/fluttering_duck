@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttering_duck/characters.dart';
+import 'package:fluttering_duck/scene.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,51 +65,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    double appWidth = MediaQuery.of(context).size.width;
-    double appHeight = MediaQuery.of(context).size.height;
-    double duckWidth = 120.0;
-    double duckHeight = 120.0;
-
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+      //   // Here we take the value from the MyHomePage object that was created by
+      //   // the App.build method, and use it to set our appbar title.
+      //   title: Text(widget.title),
+      // ),
       body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
+        decoration: BoxDecoration(
+          image: const DecorationImage(
             image: AssetImage("images/sky.png"),
             fit: BoxFit.cover,
           ),
+          border: Border.all(color: Colors.blueAccent, width:5),
         ),
-        width: double.infinity,
-        height: double.infinity,
-        child: Stack(
-          alignment: Alignment.topLeft,
-          children: [
-            Positioned(
-              left: (appWidth * 0.3) - (duckWidth / 2),
-              top: (appHeight * 0.5) - (duckHeight / 2),
-              child: Container(
-                width: duckWidth,
-                height: duckHeight,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("images/live_duck.png"),
-                    fit: BoxFit.scaleDown,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        /** https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-width */
+        child: Scene(
+            appWidth: MediaQuery.of(context).size.width,
+            appHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,

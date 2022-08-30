@@ -62,6 +62,10 @@ flutter:
     - images/sky.png
     - images/live_duck.png
     - images/dead_duck.png
+    - images/brick_wall.png
+    - images/brick_wall2.png
+    - images/cloud.png
+    - images/bomb.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
