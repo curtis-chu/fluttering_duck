@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttering_duck/characters.dart';
+import 'package:fluttering_duck/characters/Cloud.dart';
 import 'package:fluttering_duck/scene.dart';
 
 void main() {
@@ -86,11 +86,11 @@ class _MyHomePageState extends State<MyHomePage> {
             appWidth: MediaQuery.of(context).size.width,
             appHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _incrementCounter,
+      //   tooltip: 'Increment',
+      //   child: const Icon(Icons.add),
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
