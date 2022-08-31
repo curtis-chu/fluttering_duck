@@ -31,6 +31,7 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
   late double duckVelocity;
   late int score;
   final player = AudioPlayer();
+  final duckPlayer = AudioPlayer();
   late bool start = false;
 
   /// 放角色的地方
@@ -201,15 +202,15 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
   void flyAction() {
     /** 
      * BGM
-     * 在 chrome 66 後不能自動播音樂。
+     * 在 chrome 66 後需要使用者與介面互動後才能播放背景音
      * 錯誤訊息: play() failed because the user didn't interact with the document first.
      * https://github.com/bluefireteam/audioplayers/issues/831
      */
     if (!start) {
-      player.play(UrlSource('sounds/Sneaky_Snitch.mp3'),
-          mode: PlayerMode.lowLatency);
+      player.play(UrlSource('sounds/Sneaky_Snitch.mp3'));
       start = true;
     }
+    duckPlayer.play(UrlSource('sounds/duck_quack.mp3'));
   }
 }
 

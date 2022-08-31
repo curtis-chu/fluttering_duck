@@ -1,16 +1,11 @@
 # fluttering_duck
-
-A new Flutter project.
+會飛的鴨
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+```sh
+flutter run
+```
+選擇以 Chrome 啟動
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+圖片、音樂皆是從網路上下載取得。如果有任何侵權行為歡迎告知我會進行處理。
