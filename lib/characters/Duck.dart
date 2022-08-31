@@ -52,6 +52,10 @@ class Duck extends StatelessWidget {
     return Rect.fromLTWH(left, top, width, height);
   }
 
+  void fly() {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Positioned(

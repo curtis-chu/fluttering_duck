@@ -174,5 +174,7 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
       start = true;
     }
     duckPlayer.play(UrlSource('sounds/duck_quack.mp3'));
+
+    duck.fly();
   }
 }
