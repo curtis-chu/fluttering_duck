@@ -8,8 +8,6 @@ import 'characters/FlyButton.dart';
 import 'characters/ScoreBoard.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-import 'common.dart';
-
 class Scene extends StatefulWidget {
   late double appWidth;
   late double appHeight;
@@ -104,9 +102,11 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
         /** 清空角色 */
         characters.clear();
 
+        /** 計分 */
         score = 1000;
         scoreBoard.setStatus(score);
 
+        /** 鴨子 */
         var isDead = isDuckDead();
         if (isDead) {
           duck.setStatus(DuckState.dead);
@@ -115,6 +115,7 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
         }
         duck.moves();
 
+        /** 其他 */
         cloud1.moves();
         cloud2.moves();
 
