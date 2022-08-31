@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fluttering_duck/characters/BrickWall.dart';
 import 'dart:async';
-import 'characters/AliveDuck.dart';
+import 'characters/Duck.dart';
 import 'characters/Cloud.dart';
 import 'dart:math';
-import 'characters/DeadDuck.dart';
 import 'characters/FlyButton.dart';
-import 'characters/Score.dart';
+import 'characters/ScoreBoard.dart';
 import 'package:audioplayers/audioplayers.dart';
+
+import 'common.dart';
 
 class Scene extends StatefulWidget {
   late double appWidth;
@@ -22,15 +23,15 @@ class Scene extends StatefulWidget {
 
 class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
   static const int duckSize = 120;
-  static const acceleration = 0.3; // 虛擬世界加速度。單位: pixel / frame
-
-  late Position duckPosition;
-  late Position cloudPosition;
-  late Position cloud2Position;
-  late Position brickWallPosition;
-  late double duckVelocity;
+  static const gravity = 0.3; // 虛擬世界重力。單位: pixel / frame
+  late Duck duck;
+  late Cloud cloud1;
+  late Cloud cloud2;
+  late ScoreBoard scoreBoard;
+  late BrickWall brickWall;
+  late FlyButton flyButton;
   late int score;
-  final player = AudioPlayer();
+  final bgmPlayer = AudioPlayer();
   final duckPlayer = AudioPlayer();
   late bool start = false;
 
@@ -43,102 +44,87 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
 
     print('appHeight=${widget.appHeight} appWidth=${widget.appWidth}');
 
+    /** 背景音樂結束後重新播放 */
+    bgmPlayer.onPlayerComplete.listen((event) {
+      print('bgm reload');
+      bgmPlayer.resume();
+    });
+
+    /** 鴨子放在離左側 30% 距上方 50% 處 */
+    duck = Duck(
+        left: (widget.appWidth * 0.3) - (duckSize / 2),
+        top: (widget.appHeight * 0.5) - (duckSize / 2),
+        width: 120,
+        height: 120);
+    duck.init(-12, gravity);
+
+    /** 計分板放在右上 */
+    scoreBoard = ScoreBoard(
+        left: widget.appWidth * 0.7, top: 0, width: 300, height: 120);
+    scoreBoard.init(0, 0);
+
+    /** 控制按鈕放在左下 */
+    flyButton = FlyButton(
+        left: 0, top: widget.appHeight - 120, width: 120, height: 120);
+    flyButton.init(0, 0);
+    flyButton.setAction(flyAction);
+
+    /** 其他角色隨意放 */
+    cloud1 = Cloud(
+        left: widget.appWidth,
+        top: Random().nextInt(widget.appHeight.toInt()).toDouble(),
+        width: 200,
+        height: 120);
+    cloud1.init(-2, 0);
+
+    cloud2 = Cloud(
+        left: widget.appWidth,
+        top: Random().nextInt(widget.appHeight.toInt()).toDouble(),
+        width: 120,
+        height: 120);
+    cloud2.init(-3, 0);
+
+    brickWall =
+        BrickWall(left: widget.appWidth * 0.7, top: 0, width: 60, height: 120);
+    brickWall.init(0, 0);
+
     /** 分數初始化 */
     score = 0;
-
-    /** 鴨子位置初始化，約放在離左側 30% 距上方 50% 處 */
-    duckPosition = Position(
-        left: (widget.appWidth * 0.3) - (duckSize / 2),
-        top: (widget.appHeight * 0.5) - (duckSize / 2));
-
-    /** 鴨子初始速度 */
-    duckVelocity = -12;
-
-    /** 雲位置初始化 */
-    cloudPosition = Position(
-        left: widget.appWidth,
-        top: Random().nextInt(widget.appHeight.toInt()).toDouble());
-
-    cloud2Position = Position(
-        left: widget.appWidth,
-        top: Random().nextInt(widget.appHeight.toInt()).toDouble() + 80);
-
-    /** 牆位置初始化 */
-    brickWallPosition = Position(left: widget.appWidth * 0.7, top: 0);
 
     setState(() {
       /** 清空角色 */
       characters.clear();
       /** 佈置角色 */
-      characters.add(AliveDuck(
-          left: duckPosition.left,
-          top: duckPosition.top,
-          width: 120,
-          height: 120));
+      characters.add(duck.build(context));
     });
 
-    /** 計時器 */
+    /** 計時器 60fps */
     Timer.periodic(const Duration(milliseconds: 16), (timer) {
       setState(() {
         /** 清空角色 */
         characters.clear();
 
-        /** 移動 */
-        duckMoves();
-        cloudMoves();
-        cloud2Moves();
+        score = 1000;
+        scoreBoard.setStatus(score);
+
         var isDead = isDuckDead();
+        if (isDead) {
+          duck.setStatus(DuckState.dead);
+        } else {
+          duck.setStatus(DuckState.alive);
+        }
+        duck.moves();
+
+        cloud1.moves();
+        cloud2.moves();
 
         /** 佈置角色 */
-        characters.add(isDead
-            ? DeadDuck(
-                left: duckPosition.left,
-                top: duckPosition.top,
-                width: 120,
-                height: 120)
-            : AliveDuck(
-                left: duckPosition.left,
-                top: duckPosition.top,
-                width: 120,
-                height: 120));
-
-        /** 佈置計分板 */
-        characters.add(Score(
-            left: widget.appWidth * 0.7,
-            top: 0,
-            width: 300,
-            height: 120,
-            score: score));
-
-        /** 設置雲 */
-        characters.add(Cloud(
-            left: cloudPosition.left,
-            top: cloudPosition.top,
-            width: 200,
-            height: 120));
-
-        /** 設置雲 */
-        characters.add(Cloud(
-            left: cloudPosition.left,
-            top: cloudPosition.top,
-            width: 120,
-            height: 120));
-
-        /** 設置牆 */
-        characters.add(BrickWall(
-            left: brickWallPosition.left,
-            top: brickWallPosition.top,
-            width: 60,
-            height: 120));
-
-        /** 設置牆 */
-        characters.add(FlyButton(
-          left: 0,
-          top: widget.appHeight - 120,
-          width: 120,
-          height: 120,
-          flyAction: flyAction,
-        ));
+        characters.add(duck.build(context));
+        characters.add(scoreBoard.build(context));
+        characters.add(flyButton.build(context));
+        characters.add(cloud1.build(context));
+        characters.add(cloud2.build(context));
+        characters.add(brickWall.build(context));
       });
     });
   }
@@ -153,69 +139,39 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
 
   /// 鴨子的各種死法
   bool isDuckDead() {
+    var position = duck.getPosition();
     /** 撞到底部死了 */
-    if (duckPosition.top + duckSize > widget.appHeight) {
+    if (position.top + duckSize > widget.appHeight) {
       return true;
     }
     /** 飛天死了 */
-    if (duckPosition.top + duckSize < 0) {
+    if (position.top + duckSize < 0) {
       return true;
     }
     /** 左邊撞死了 */
-    if (duckPosition.left + duckSize < 0) {
+    if (position.left + duckSize < 0) {
       return true;
     }
     /** 右邊撞死了 */
-    if (duckPosition.left + duckSize > widget.appWidth) {
+    if (position.left + duckSize > widget.appWidth) {
       return true;
     }
     return false;
   }
 
-  ///鴨子動
-  void duckMoves() {
-    /** 重力加速度 */
-    duckVelocity = duckVelocity + acceleration;
-    duckPosition.top += duckVelocity;
-  }
-
-  ///雲動
-  void cloudMoves() {
-    cloudPosition.left -= 2;
-    if (cloudPosition.left + 300 < 0) {
-      cloudPosition.left = widget.appWidth;
-      cloudPosition.top = Random().nextInt(widget.appHeight.toInt()).toDouble();
-    }
-  }
-
-  ///雲2動
-  void cloud2Moves() {
-    cloud2Position.left -= 1;
-    if (cloud2Position.left + 300 < 0) {
-      cloud2Position.left = widget.appWidth;
-      cloud2Position.top =
-          Random().nextInt(widget.appHeight.toInt()).toDouble();
-    }
-  }
-
   ///鴨子要飛
-  void flyAction() {
+  Future<void> flyAction() async {
     /** 
-     * BGM
+     * BGM 放在這裡啟動
      * 在 chrome 66 後需要使用者與介面互動後才能播放背景音
      * 錯誤訊息: play() failed because the user didn't interact with the document first.
      * https://github.com/bluefireteam/audioplayers/issues/831
      */
     if (!start) {
-      player.play(UrlSource('sounds/Sneaky_Snitch.mp3'));
+      /** 在 hot reload 後背景音會重複播放 */
+      bgmPlayer.play(UrlSource('sounds/bgm.mp3'));
       start = true;
     }
     duckPlayer.play(UrlSource('sounds/duck_quack.mp3'));
   }
-}
-
-class Position {
-  double left;
-  double top;
-  Position({required this.left, required this.top});
 }

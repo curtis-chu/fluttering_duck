@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import '../common.dart';
 
-class Cloud extends StatelessWidget {
+class Duck extends StatelessWidget {
   late double width;
   late double height;
   late double left;
   late double top;
   late double velocity;
   late double gravity;
-  late CloudState state;
+  late DuckState state;
 
-  Cloud(
+  Duck(
       {Key? key,
       required this.left,
       required this.top,
@@ -22,13 +22,13 @@ class Cloud extends StatelessWidget {
   void init(double v, double g) {
     velocity = v;
     gravity = g;
-    setStatus(CloudState.normal);
+    setStatus(DuckState.alive);
   }
 
   /// 移動
   void moves() {
     velocity = velocity + gravity;
-    left += velocity;
+    top += velocity;
   }
 
   /// 速度
@@ -38,7 +38,7 @@ class Cloud extends StatelessWidget {
   }
 
   /// 狀態
-  void setStatus(CloudState s) {
+  void setStatus(DuckState s) {
     state = s;
   }
 
@@ -55,18 +55,25 @@ class Cloud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: left,
-      top: top,
-      child: Image.asset(
-        "images/cloud.png",
-        height: height,
-        width: width,
-        fit: BoxFit.fill,
-      ),
-    );
+        left: left,
+        top: top,
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(state == DuckState.alive
+                  ? "images/live_duck.png"
+                  : "images/dead_duck.png"),
+              fit: BoxFit.fill,
+            ),
+            // border: Border.all(color: Colors.blueAccent),
+          ),
+        ));
   }
 }
 
-enum CloudState {
-  normal,
+enum DuckState {
+  alive,
+  dead,
 }

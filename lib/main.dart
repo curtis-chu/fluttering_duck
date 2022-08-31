@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
         decoration: BoxDecoration(
           image: const DecorationImage(
             image: AssetImage("images/sky.png"),
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
           ),
           border: Border.all(color: Colors.blueAccent, width:5),
         ),

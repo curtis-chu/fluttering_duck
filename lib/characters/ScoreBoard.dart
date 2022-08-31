@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import '../common.dart';
 
-class Cloud extends StatelessWidget {
+class ScoreBoard extends StatelessWidget {
   late double width;
   late double height;
   late double left;
   late double top;
   late double velocity;
   late double gravity;
-  late CloudState state;
+  late int state;
 
-  Cloud(
+  ScoreBoard(
       {Key? key,
       required this.left,
       required this.top,
@@ -22,7 +22,7 @@ class Cloud extends StatelessWidget {
   void init(double v, double g) {
     velocity = v;
     gravity = g;
-    setStatus(CloudState.normal);
+    setStatus(0);
   }
 
   /// 移動
@@ -38,7 +38,7 @@ class Cloud extends StatelessWidget {
   }
 
   /// 狀態
-  void setStatus(CloudState s) {
+  void setStatus(int s) {
     state = s;
   }
 
@@ -55,18 +55,19 @@ class Cloud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: left,
-      top: top,
-      child: Image.asset(
-        "images/cloud.png",
-        height: height,
-        width: width,
-        fit: BoxFit.fill,
-      ),
-    );
+        left: left,
+        top: top,
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Text(
+            'SCORE: ${state.toString()}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.yellow,
+                fontSize: 30),
+          ),
+        ));
   }
-}
-
-enum CloudState {
-  normal,
 }

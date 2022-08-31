@@ -67,7 +67,7 @@ flutter:
     - images/brick_wall.png
     - images/cloud.png
     - images/bomb.png
-    - sounds/Sneaky_Snitch.mp3
+    - sounds/bgm.mp3
     - sounds/duck_quack.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
