@@ -27,8 +27,9 @@ class Duck extends StatelessWidget {
 
   /// 移動
   void moves() {
-    velocity = velocity + gravity;
-    top += velocity;
+    // velocity = velocity + gravity;
+    // top += velocity;
+    top = 150;
   }
 
   /// 速度
@@ -49,11 +50,12 @@ class Duck extends StatelessWidget {
 
   /// 回傳佔位，可用來做碰撞偵測
   Rect getRect() {
+    print('duck rect$left, $top, $width, $height');
     return Rect.fromLTWH(left, top, width, height);
   }
 
   void fly() {
-
+    velocity = -10;
   }
 
   @override

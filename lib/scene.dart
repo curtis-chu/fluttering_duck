@@ -83,8 +83,8 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
     cloud2.init(-3, 0);
 
     brickWall =
-        BrickWall(left: widget.appWidth * 0.7, top: 0, width: 60, height: 120);
-    brickWall.init(0, 0);
+        BrickWall(left: widget.appWidth, top: 0, width: 60, height: 120);
+    brickWall.init(-5, 0);
 
     /** 分數初始化 */
     score = 0;
@@ -106,6 +106,13 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
         score = 1000;
         scoreBoard.setStatus(score);
 
+        duck.moves();
+        brickWall.moves();
+
+        /** 其他 */
+        cloud1.moves();
+        cloud2.moves();
+
         /** 鴨子 */
         var isDead = isDuckDead();
         if (isDead) {
@@ -113,11 +120,6 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
         } else {
           duck.setStatus(DuckState.alive);
         }
-        duck.moves();
-
-        /** 其他 */
-        cloud1.moves();
-        cloud2.moves();
 
         /** 佈置角色 */
         characters.add(duck.build(context));
@@ -157,6 +159,7 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
     if (position.left + duckSize > widget.appWidth) {
       return true;
     }
+    if (duck.getRect().overlaps(brickWall.getRect())) return true;
     return false;
   }
 
@@ -173,7 +176,7 @@ class _SceneState extends State<Scene> with SingleTickerProviderStateMixin {
       bgmPlayer.play(UrlSource('sounds/bgm.mp3'));
       start = true;
     }
-
+    duckPlayer.play(UrlSource('sounds/duck_quack.mp3'));
     duck.fly();
   }
 }

@@ -5,7 +5,9 @@ class BrickWall extends StatelessWidget {
   late double width;
   late double height;
   late double left;
+  late double initLeft;
   late double top;
+  late double initTop;
   late double velocity;
   late double gravity;
   late int state;
@@ -23,12 +25,18 @@ class BrickWall extends StatelessWidget {
     velocity = v;
     gravity = g;
     setStatus(0);
+    initLeft = left;
+    initTop = top;
   }
 
   /// 移動
   void moves() {
     velocity = velocity + gravity;
     left += velocity;
+
+    if (left <= 0) {
+      left = initLeft;
+    }
   }
 
   /// 速度
@@ -49,6 +57,7 @@ class BrickWall extends StatelessWidget {
 
   /// 回傳佔位，可用來做碰撞偵測
   Rect getRect() {
+     print('wall rect$left, $top, $width, $height');
     return Rect.fromLTWH(left, top, width, height);
   }
 
@@ -66,7 +75,7 @@ class BrickWall extends StatelessWidget {
               fit: BoxFit.cover,
               repeat: ImageRepeat.repeat,
             ),
-            border: Border.all(color: Colors.blueAccent),
+            border: Border.all(width: 10, color: Colors.blueAccent),
           ),
         ));
   }
